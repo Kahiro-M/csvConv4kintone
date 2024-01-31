@@ -27,7 +27,7 @@ def replace_special_characters(input_string):
     import re
     import csv
     # 置換する特殊文字の正規表現パターン
-    pattern = r'[（）「」［］【】｛｝／＠＋～＃％＆”’＝｜^＊；：？、。；："\',.\\\*\.\+\?\|\{\}\(\)\[\]\^\$\-/@+~#%&=]'
+    pattern = r'[（）「」［］【】｛｝／＠＋～＃％＆”’＝｜^＊；：？、。；："\' ,.\\\*\.\+\?\|\{\}\(\)\[\]\^\$\-/@+~#%&=]'
 
     header = input_string.split('","')
     if(header[0][0] == '"'):
