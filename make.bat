@@ -1,0 +1,1 @@
+pyinstaller trans4kintone.py --onefile --icon=icon.ico
