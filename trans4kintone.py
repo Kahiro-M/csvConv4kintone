@@ -1,5 +1,6 @@
 import sys
 
+# CSVのエンコード変換
 def convert_encoding(input_file, output_file_endwith='_sjis', in_encoding='utf-8', out_encoding='CP932'):
     import pathlib
     import codecs
@@ -12,6 +13,18 @@ def convert_encoding(input_file, output_file_endwith='_sjis', in_encoding='utf-8
                 f_out.write(line)
     return output_file
 
+# CSVのヘッダー行を追加
+def insert_csv_header(input_file,output_enc,input_header):
+    import pathlib
+    if(input_header != ''):
+        file_path = pathlib.Path(input_file)
+        header_file_path = pathlib.Path(input_header)
+        s = file_path.read_text(output_enc)
+        header = header_file_path.read_text(output_enc)
+        s = header + s
+        file_path.write_text(s,output_enc)
+
+# CSVのヘッダー行をkintone用に変換
 def replace_unusable_csv_header(input_file,in_encoding='utf-8'):
     import fileinput
     i = 0
@@ -23,6 +36,7 @@ def replace_unusable_csv_header(input_file,in_encoding='utf-8'):
         i+=1
 
 
+# kintoneのフィールドコード用に文字列置換
 def replace_special_characters(input_string):
     import re
     import csv
@@ -57,19 +71,26 @@ if __name__ == '__main__':
         else:
             input_enc = 'utf-8'
 
-        # 入力がSJISなら出力はUTF8、入力がUTF8なら出力はSJIS
+        # 入力がSJISなら出力はUTF8
         if(input_enc in ['1','CP932','sjis','SJIS','jis','JIS','s-jis','S-JIS','Shift_JIS']):
             input_enc = 'CP932'
         else:
             input_enc = 'utf-8'
+
+        # 第三引数はCSVのヘッダーファイル。文字コードはutf8のみ
+        if(len(args)>3):
+            input_header = args[3]
+        else:
+            input_header = ''
 
     # 引数なし
     else:
         # 使用例
         input_file = input("変換したいファイルのパスを入力してください: ")
         input_enc  = input("変換元 文字コード(1:SJIS, その他:UTF8): ")
+        input_header = input("差し込むCSVヘッダー(UTF8のみ): ")
         
-        # 入力がSJISなら出力はUTF8、入力がUTF8なら出力はSJIS
+        # 入力がSJISなら出力はUTF8
         if(input_enc in ['1','CP932','sjis','SJIS','s-jis','S-JIS','Shift_JIS']):
             input_enc = 'CP932'
         else:
@@ -82,5 +103,9 @@ if __name__ == '__main__':
     if(input_enc != output_enc):
         # 変換実行
         output_file = convert_encoding(input_file,output_file_endwith,input_enc,output_enc)
-        
+    
+    # CSVのヘッダー行を追加
+    if(input_header != ''):
+        insert_csv_header(output_file,output_enc,input_header)
+    # CSVのヘッダー行を変換
     replace_unusable_csv_header(output_file)
